@@ -1,0 +1,40 @@
+########################################################
+####################### Joystick #######################
+## Joystick events contain 3 parameters in a tuple    ##
+## - timestamp: the time of the event occurance       ##
+## - direction: string of the joystick movement       ##
+##              "up, down, left, right, middle"       ##
+## - action: string of the action that occured        ##
+##           "pressed, released, held"                ##
+########################################################
+
+########################################################
+# Most integrated systems are perpetual programs which #
+# run in order to monitor an environment or wait for   #
+# specific events to occur in order to react to them.  #
+# This is the case when using the joystick in a useful #
+# way.                                                 #
+########################################################
+
+from sense_hat import SenseHat
+
+sense = SenseHat()
+sense.clear()
+
+x, y = 0, 0
+colours = [[255, 0, 0], [0, 255, 0], 
+	   [0, 0, 255], [255, 255, 0],
+           [255, 0, 255], [0, 255, 255]]
+colour = 0
+
+while True:
+  for event in sense.stick.get_events():
+    sense.set_pixel(x, y, colours[colour])
+    if event.action == 'pressed' and event.direction == 'up':
+      if y>0: y -= 1
+    if event.action == 'pressed' and event.direction == 'down':
+      if y<7: y += 1
+    if event.action == 'pressed' and event.direction == 'right':
+      if x<7: x += 1
+    if event.action == 'pressed' and event.direction == 'left':
+      if x>0: x -= 1

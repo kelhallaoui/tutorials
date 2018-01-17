@@ -1,0 +1,128 @@
+from sense_hat import SenseHat
+import time
+
+sense = SenseHat()
+
+# Select the orientation of the pixel grid 
+# (0, 90, 180, 270)
+sense.set_rotation(90)
+
+# Array defining RGB values
+R = [255, 0, 0]
+X = [255, 255, 0]
+Y = [255, 0, 255]
+O = [255, 255, 255]
+
+screen_display = [
+R, R, O, O, O, O, O, O,
+R, R, O, O, O, O, Y, O,
+O, O, O, O, O, O, O, O,
+O, O, O, X, X, O, O, O,
+O, O, O, X, X, O, O, O,
+O, O, O, O, O, O, O, O,
+O, O, O, O, O, O, Y, Y,
+O, O, O, O, O, O, Y, Y
+]
+# Set the display with an 64-element array of 
+# [R, G, B] values.
+sense.set_pixels(screen_display)
+time.sleep(0.5)
+
+# Set a single pixel
+# sense.set_pixel(x, y, r, g, b)
+sense.set_pixel(3, 3, 0, 0, 0)
+sense.set_pixel(4, 4, 0, 0, 0)
+time.sleep(0.5)
+
+# Load an 8*8 pixel image
+# filename = "example.png"
+# sense.load_image(filename)
+
+# Clear all pixels
+# All red - sense.clear(r, g, b)
+sense.clear(255, 0, 0)
+time.sleep(0.5)
+# All purple - sense.clear([r, g, b])
+# The input can also be a tuple.
+sense.clear([255, 0, 255])
+time.sleep(0.5)
+# All set to OFF
+sense.clear()
+time.sleep(0.5)
+
+# Message scrolls through the screen
+sense.show_message("Hello!", scroll_speed = 0.06, text_colour = [255, 255, 255], back_colour = [255, 0, 0])
+
+# Show a single letter
+sense.show_letter('%', [255, 0, 0], [255, 255, 255])
+time.sleep(1)
+
+# Set the device to low light mode
+sense.low_light = True
+time.sleep(1)
+sense.low_light = False
+time.sleep(0.5)
+
+counter = 1
+while(counter <= 3):
+	sense.show_message(str(counter), scroll_speed = 0.05)
+	counter += 1
+
+###########################
+## Environmental sensors ##
+###########################
+
+# Get humidity
+humidity = sense.get_humidity()
+sense.show_message("Humidity: %s" % round(humidity,2), scroll_speed = 0.03)
+print("Humidity: ", round(humidity,2))
+
+# Get temperature
+temp = sense.get_temperature()
+sense.show_message("Temperature: %s" % round(temp,2), scroll_speed = 0.03)
+print("Temperature: ", round(temp,2))
+
+# Get pressure
+pressure = sense.get_pressure()
+sense.show_message("Pressure: %s" % round(pressure,2), scroll_speed = 0.03)
+print("Pressure: ", round(pressure,2))
+
+######################################
+## Inertial Measurement Unit Sensor ##
+######################################
+
+# Enables the IMU sensors
+# (compass_enabled, gyro_enabled, accel_enabled)
+sense.set_imu_config(True, True, True)
+
+# Get orientation in aircraft axes (pitch, roll and yaw)
+# In radians
+orientation_rad = sense.get_orientation_radians()
+for key in orientation_rad:
+  orientation_rad[key] = round(orientation_rad[key], 2)
+print("p: {pitch}, r: {roll}, y: {yaw}".format(**orientation_rad))
+# In degrees, you can also use the equivalent .get_orientation
+orientation = sense.get_orientation_degrees()
+for key in orientation:
+  orientation[key] = round(orientation[key], 2)
+print("p: {pitch}, r: {roll}, y: {yaw}".format(**orientation))
+
+# Get compass
+# This identifies the deviation from north in degrees
+north = sense.get_compass()
+print("North: %s" % round(north, 2))
+# Get the raw compass values from which we can calculate
+# the compass direction
+compass_raw = sense.get_compass_raw()
+for key in compass_raw:
+  compass_raw[key] = round(compass_raw[key], 2)
+print("x: {x}, y: {y}, z: {z}".format(**compass_raw))
+
+# Get acceleration
+accel = sense.get_accelerometer()
+for key in accel:
+  accel[key] = round(accel[key], 2)
+print("p: {pitch}, r: {roll}, y: {yaw}".format(**accel))
+
+
+
